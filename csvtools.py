@@ -1,18 +1,20 @@
 # CSV Display and Debugging Tool
 # Rawsab Said
-# Version 1.0.4
+# Version 1.0.5
 
 import csv
 import sys
 import re
 from collections import Counter
+import contextlib
 
 DEBUG_MODE = False
 VERBOSE_MODE = False
 CUSTOM_DELIMITER = None
 DISPLAY_TABLE = False
+SAVE_TO_FILE = None
 
-VALID_FLAGS = ['-debug', '-v', '-dl', '-display']
+VALID_FLAGS = ['-debug', '-v', '-dl', '-display', '-stf']
 
 def log_debug(message):
     if DEBUG_MODE:
@@ -173,7 +175,7 @@ def check_unknown_flags():
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("To use script: python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter]")
+        print("To use script: python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter] [-stf output.txt]")
         sys.exit(1)
 
     csv_filename = sys.argv[1]
@@ -192,8 +194,21 @@ if __name__ == "__main__":
         else:
             print("Please provide a custom delimiter after the -dl flag.")
             sys.exit(1)
+    if '-stf' in sys.argv:
+        stf_index = sys.argv.index('-stf') + 1
+        if stf_index < len(sys.argv):
+            SAVE_TO_FILE = sys.argv[stf_index].strip()
+        else:
+            print("Please provide a filename after the -stf flag.")
+            sys.exit(1)
 
-    try:
-        format_csv(csv_filename)
-    except ValueError as e:
-        print(f"Error: {e}")
+    with open(SAVE_TO_FILE, 'w') if SAVE_TO_FILE else contextlib.nullcontext() as file:
+        if SAVE_TO_FILE:
+            sys.stdout = file
+        try:
+            format_csv(csv_filename)
+        except ValueError as e:
+            print(f"Error: {e}")
+        finally:
+            if SAVE_TO_FILE:
+                sys.stdout = sys.__stdout__

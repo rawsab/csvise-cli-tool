@@ -1,5 +1,3 @@
 # ignore test files
 *.csv
-
-# ignore update notes
-updates.txt
+*.txt
