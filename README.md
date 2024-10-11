@@ -16,9 +16,32 @@ python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter] [-st
 
 ### Custom Delimiter Example:
 ```
-python3 csvtools.py data.csv -display -dl X
+python3 csvtools.py data.csv -display -dl ";"
 ```
-Displays a formatted table output of `data.csv` where the fields in raw data are separated by "X".
+Displays a formatted table output of `data.csv` where the fields in raw data are separated by ";" (semicolon).
+
+### ⚙️ Configuration
+Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it is in the same directory as `csvtools.py`).
+```jsonc
+{
+    // additional delimiters to automatically detect
+    "additional_delimiters": ["|", ";", "###"],
+
+    // -display flag prints table starting at this index
+    "start_index": 1,
+
+    // setting to null prints all rows
+    "num_rows_to_print": null,
+
+    // table display formatting customization
+    "display_column_lines": true,
+    "display_row_lines": false,
+
+    "check_type_mismatches": true,
+
+    "string_case": "default"  // options: "default", "upper", "lower"
+}
+```
 
 ## 🗓️ Upcoming Features
 - Data normalization
