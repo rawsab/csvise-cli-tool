@@ -1,6 +1,6 @@
 # CSV Display and Debugging Tool
 # Rawsab Said
-# Version 1.0.2
+# Version 1.0.4
 
 import csv
 import sys
@@ -171,7 +171,7 @@ def check_unknown_flags():
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("To use script: python3 csvdisplay.py <filename.csv> [-debug] [-v] [-dl delimiter] [-display]")
+        print("To use script: python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter]")
         sys.exit(1)
 
     csv_filename = sys.argv[1]
