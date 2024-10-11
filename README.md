@@ -1,9 +1,9 @@
 # 🛠️ CSV Tools
 
-## Setup
+## 💻 Setup
 Download `csvtools.py` (recommended to add to project directory) and run commands in terminal.
 
-## Features
+## 💡 Features
 Run the following command, replacing `<filename.csv>` with path to target file and add flags for the following functionalities:
 ```
 python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter]
@@ -18,3 +18,10 @@ python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter]
 python3 csvtools.py data.csv -display -dl X
 ```
 Displays a formatted table output of `data.csv` where the fields in raw data are separated by "X".
+
+## 🗓️ Upcoming Features
+- Configuration file support
+- Data normalization
+- Duplicate row detection
+- Interactive issue handling
+- Pandas integration for data analysis
