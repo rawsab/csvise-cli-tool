@@ -21,7 +21,7 @@ def log_verbose(message, section_break=False):
         print(f"[VERBOSE] {message}")
 
 def detect_delimiter(sample_row):
-    log_verbose(f"Detecting delimiter from sample row: {sample_row}")
+    log_verbose(f"Detecting delimiter from sample row: {sample_row}", section_break=True)
     if re.search(r'\t{2,}', sample_row):
         log_verbose("Delimiter detected: Tabs")
         return r'\t+'
@@ -67,9 +67,7 @@ def determine_majority_type(types, threshold=0.7):
 def format_csv(filename):
     with open(filename, 'r') as file:
         sample_row = file.readline()
-        # log_verbose(f"Detecting delimiter from sample row: {sample_row}")
         delimiter = detect_delimiter(sample_row)
-        # log_verbose(f"Delimiter detected: {delimiter}")
         file.seek(0)
 
         if delimiter in [r'\t+', r' +']:
@@ -83,8 +81,15 @@ def format_csv(filename):
         return
 
     log_verbose(f"Detected columns: {rows[0]}", section_break=True)
-    rows = [[clean_field(item) for item in row] for row in rows]
-    log_verbose(f"Cleaned rows: {rows}", section_break=True)
+
+    cleaned_rows = []
+    for i, row in enumerate(rows):
+        cleaned_row = [clean_field(item) for item in row]
+        if cleaned_row != row:
+            cleaned_rows.append(cleaned_row)
+
+    if cleaned_rows:
+        log_verbose(f"Cleaned rows: {cleaned_rows}", section_break=True)
 
     expected_length = len(rows[0])
     col_widths = [0] * expected_length
@@ -95,9 +100,10 @@ def format_csv(filename):
     for row in rows:
         for i, item in enumerate(row):
             col_widths[i] = max(col_widths[i], len(str(item)) + 2)
-    
+
     log_verbose(f"Formatted column display widths: {col_widths}")
-    
+    print()
+
     incorrect_length_rows = []
     type_mismatches = []
 
@@ -107,7 +113,7 @@ def format_csv(filename):
             column_types[i].append(detect_type(item))
 
     expected_types = [determine_majority_type(types) for types in column_types]
-    
+
     log_verbose(f"Expected types: {expected_types}", section_break=True)
     if VERBOSE_MODE:
         print()
@@ -119,7 +125,7 @@ def format_csv(filename):
 
     for row_number, row in enumerate(rows[1:], start=1):
         actual_length = len([item for item in row if item.strip() != ''])
-        
+
         if actual_length != expected_length:
             incorrect_length_rows.append((row_number, actual_length))
 
@@ -152,7 +158,7 @@ if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("TO USE SCRIPT: python3 csvdisplay.py <filename.csv> [-debug] [-v]")
         sys.exit(1)
-        
+
     csv_filename = sys.argv[1]
     if '-debug' in sys.argv:
         DEBUG_MODE = True
