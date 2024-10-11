@@ -23,7 +23,7 @@ def log_verbose(message, section_break=False):
 
 def detect_delimiter(sample_row):
     if CUSTOM_DELIMITER:
-        log_verbose(f"Using custom delimiter: {CUSTOM_DELIMITER}")
+        log_verbose(f"Using custom delimiter: {CUSTOM_DELIMITER}\n", section_break=True)
         return CUSTOM_DELIMITER
     log_verbose(f"Detecting delimiter from sample row: {sample_row}")
     if re.search(r'\t{2,}', sample_row):
@@ -36,7 +36,7 @@ def detect_delimiter(sample_row):
         log_verbose("Delimiter detected: ,")
         return ','
     else:
-        raise ValueError("[UNSUPPORTED DELIMITER] Supported delimiters are multiple tabs, multiple spaces, or comma.")
+        raise ValueError("Supported delimiters are multiple tabs, multiple spaces, or comma. Use -dl flag for custom delimiter.")
 
 def clean_field(field):
     original_field = field
@@ -161,7 +161,7 @@ def format_csv(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("TO USE SCRIPT: python3 csvdisplay.py <filename.csv> [-debug] [-v] [-dl delimiter]")
+        print("To use script: python3 csvdisplay.py <filename.csv> [-debug] [-v] [-dl delimiter]")
         sys.exit(1)
 
     csv_filename = sys.argv[1]
