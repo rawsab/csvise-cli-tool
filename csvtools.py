@@ -127,9 +127,11 @@ def format_csv(filename):
     log_verbose(f"Expected types: {expected_types}\n", section_break=True)
 
     if DISPLAY_TABLE:
-        header_row = "   | " + " | ".join(f"{rows[0][i]:<{col_widths[i]}}" for i in range(expected_length))
+        row_number_width = len(str(len(rows) - 1))
+
+        header_row = f"{' ' * row_number_width} | " + " | ".join(f"{rows[0][i]:<{col_widths[i]}}" for i in range(expected_length))
         print(header_row)
-        separator = "   -" + "+".join('-' * (width + 2) for width in col_widths)
+        separator = f"{'--' * row_number_width}-" + "+".join('-' * (width + 2) for width in col_widths)
         print(separator)
 
         for row_number, row in enumerate(rows[1:], start=1):
@@ -143,7 +145,7 @@ def format_csv(filename):
                 if expected_types[i] and actual_type != expected_types[i]:
                     type_mismatches.append((row_number, i + 1, actual_type, expected_types[i]))
 
-            formatted_row = f"{row_number:<2} | " + " | ".join(
+            formatted_row = f"{row_number:<{row_number_width}} | " + " | ".join(
                 f"{row[i]:<{col_widths[i]}}" for i in range(expected_length)
             )
             print(formatted_row)
