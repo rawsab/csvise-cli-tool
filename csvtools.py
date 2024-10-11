@@ -10,6 +10,9 @@ from collections import Counter
 DEBUG_MODE = False
 VERBOSE_MODE = False
 CUSTOM_DELIMITER = None
+DISPLAY_TABLE = False
+
+VALID_FLAGS = ['-debug', '-v', '-dl', '-display']
 
 def log_debug(message):
     if DEBUG_MODE:
@@ -123,26 +126,27 @@ def format_csv(filename):
 
     log_verbose(f"Expected types: {expected_types}\n", section_break=True)
 
-    header_row = "   | " + " | ".join(f"{rows[0][i]:<{col_widths[i]}}" for i in range(expected_length))
-    print(header_row)
-    separator = "   -" + "+".join('-' * (width + 2) for width in col_widths)
-    print(separator)
+    if DISPLAY_TABLE:
+        header_row = "   | " + " | ".join(f"{rows[0][i]:<{col_widths[i]}}" for i in range(expected_length))
+        print(header_row)
+        separator = "   -" + "+".join('-' * (width + 2) for width in col_widths)
+        print(separator)
 
-    for row_number, row in enumerate(rows[1:], start=1):
-        actual_length = len([item for item in row if item.strip() != ''])
+        for row_number, row in enumerate(rows[1:], start=1):
+            actual_length = len([item for item in row if item.strip() != ''])
 
-        if actual_length != expected_length:
-            incorrect_length_rows.append((row_number, actual_length))
+            if actual_length != expected_length:
+                incorrect_length_rows.append((row_number, actual_length))
 
-        for i, item in enumerate(row):
-            actual_type = detect_type(item, expected_types[i])
-            if expected_types[i] and actual_type != expected_types[i]:
-                type_mismatches.append((row_number, i + 1, actual_type, expected_types[i]))
+            for i, item in enumerate(row):
+                actual_type = detect_type(item, expected_types[i])
+                if expected_types[i] and actual_type != expected_types[i]:
+                    type_mismatches.append((row_number, i + 1, actual_type, expected_types[i]))
 
-        formatted_row = f"{row_number:<2} | " + " | ".join(
-            f"{row[i]:<{col_widths[i]}}" for i in range(expected_length)
-        )
-        print(formatted_row)
+            formatted_row = f"{row_number:<2} | " + " | ".join(
+                f"{row[i]:<{col_widths[i]}}" for i in range(expected_length)
+            )
+            print(formatted_row)
 
     if DEBUG_MODE:
         if incorrect_length_rows:
@@ -159,16 +163,26 @@ def format_csv(filename):
         print(f"Total number of type mismatches: {len(type_mismatches)}")
     print()
 
+def check_unknown_flags():
+    for arg in sys.argv[2:]:
+        if arg.startswith('-') and arg not in VALID_FLAGS:
+            print(f"Unknown flag: {arg}")
+            sys.exit(1)
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("To use script: python3 csvdisplay.py <filename.csv> [-debug] [-v] [-dl delimiter]")
+        print("To use script: python3 csvdisplay.py <filename.csv> [-debug] [-v] [-dl delimiter] [-display]")
         sys.exit(1)
 
     csv_filename = sys.argv[1]
+    check_unknown_flags()
+
     if '-debug' in sys.argv:
         DEBUG_MODE = True
     if '-v' in sys.argv:
         VERBOSE_MODE = True
+    if '-display' in sys.argv:
+        DISPLAY_TABLE = True
     if '-dl' in sys.argv:
         dl_index = sys.argv.index('-dl') + 1
         if dl_index < len(sys.argv):
