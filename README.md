@@ -6,12 +6,13 @@ Download `csvtools.py` (recommended to add to project directory) and run command
 ## 💡 Features
 Run the following command, replacing `<filename.csv>` with path to target file and add flags for the following functionalities:
 ```
-python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter]
+python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter] [-stf output.txt]
 ```
 - `-display` : Displays a formatted table output of the CSV data
 - `-debug` : Enables debug output for troubleshooting purposes, including information on incomplete data and type mismatches.
 - `-v` : Activates verbose mode, provides detailed logs about script operations
 - `-dl delimiter` : Sets a custom delimiter for splitting fields in target CSV file
+- `-stf output.txt` : Saves script output to a file (change `output.txt` to desired file to save in)
 
 ### Custom Delimiter Example:
 ```
