@@ -1,6 +1,6 @@
 # CSV Display and Debugging Tool
 # Rawsab Said
-# Version 1.0.1
+# Version 1.0.2
 
 import csv
 import sys
@@ -9,6 +9,7 @@ from collections import Counter
 
 DEBUG_MODE = False
 VERBOSE_MODE = False
+CUSTOM_DELIMITER = None
 
 def log_debug(message):
     if DEBUG_MODE:
@@ -21,7 +22,10 @@ def log_verbose(message, section_break=False):
         print(f"[VERBOSE] {message}")
 
 def detect_delimiter(sample_row):
-    log_verbose(f"Detecting delimiter from sample row: {sample_row}", section_break=True)
+    if CUSTOM_DELIMITER:
+        log_verbose(f"Using custom delimiter: {CUSTOM_DELIMITER}")
+        return CUSTOM_DELIMITER
+    log_verbose(f"Detecting delimiter from sample row: {sample_row}")
     if re.search(r'\t{2,}', sample_row):
         log_verbose("Delimiter detected: Tabs")
         return r'\t+'
@@ -70,7 +74,10 @@ def format_csv(filename):
         delimiter = detect_delimiter(sample_row)
         file.seek(0)
 
-        if delimiter in [r'\t+', r' +']:
+        if CUSTOM_DELIMITER:
+            rows = [line.strip().split(CUSTOM_DELIMITER) for line in file]
+            rows = [[clean_field(item) for item in row] for row in rows]
+        elif delimiter in [r'\t+', r' +']:
             rows = [re.split(delimiter, line.strip()) for line in file]
         else:
             reader = csv.reader(file, delimiter=delimiter)
@@ -114,9 +121,7 @@ def format_csv(filename):
 
     expected_types = [determine_majority_type(types) for types in column_types]
 
-    log_verbose(f"Expected types: {expected_types}", section_break=True)
-    if VERBOSE_MODE:
-        print()
+    log_verbose(f"Expected types: {expected_types}\n", section_break=True)
 
     header_row = "   | " + " | ".join(f"{rows[0][i]:<{col_widths[i]}}" for i in range(expected_length))
     print(header_row)
@@ -156,7 +161,7 @@ def format_csv(filename):
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("TO USE SCRIPT: python3 csvdisplay.py <filename.csv> [-debug] [-v]")
+        print("TO USE SCRIPT: python3 csvdisplay.py <filename.csv> [-debug] [-v] [-dl delimiter]")
         sys.exit(1)
 
     csv_filename = sys.argv[1]
@@ -164,6 +169,13 @@ if __name__ == "__main__":
         DEBUG_MODE = True
     if '-v' in sys.argv:
         VERBOSE_MODE = True
+    if '-dl' in sys.argv:
+        dl_index = sys.argv.index('-dl') + 1
+        if dl_index < len(sys.argv):
+            CUSTOM_DELIMITER = sys.argv[dl_index].strip()
+        else:
+            print("Please provide a custom delimiter after the -dl flag.")
+            sys.exit(1)
 
     try:
         format_csv(csv_filename)
