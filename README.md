@@ -20,7 +20,6 @@ python3 csvtools.py data.csv -display -dl X
 Displays a formatted table output of `data.csv` where the fields in raw data are separated by "X".
 
 ## 🗓️ Upcoming Features
-- Configuration file support
 - Data normalization
 - Duplicate row detection
 - Interactive issue handling
