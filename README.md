@@ -73,13 +73,13 @@ Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it 
 
   | Name      | Age       | Occupation  
 --------------+-----------+-------------
-1 | Alice     | 30        |  Engineer   
-2 | Bob       | 25        |  Designer   
+1 | Alice     | 30        | Engineer   
+2 | Bob       | 25        | Designer   
 3 | Charlie   | Manager   |             
-4 | Diana     | 28        |  7          
-5 | Edward    | 40.5      |  Developer  
-6 | Frank     | 20        |  Student    
-7 | George    | 45        |  Retired    
+4 | Diana     | 28        | 7          
+5 | Edward    | 40.5      | Developer  
+6 | Frank     | 20        | Student    
+7 | George    | 45        | Retired    
 
 ROWS WITH INCORRECT LENGTH:
 Row 3 is of length 2, expected 3
