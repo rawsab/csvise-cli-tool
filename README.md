@@ -64,22 +64,22 @@ Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it 
 [VERBOSE] Cleaning field: '   Retired' -> 'Retired'
 
 [VERBOSE] Cleaned rows: [['Alice', '30', 'Engineer'], ['Bob', '25', 'Designer'], ['Charlie', 'Manager'], ['Diana', '28', '7'], ['Edward', '40.5', 'Developer'], ['Frank', '20', 'Student'], ['George', '45', 'Retired']]
-[VERBOSE] Formatted column display widths: [9, 10, 12]
+[VERBOSE] Formatted column display widths: [9, 9, 11]
 [VERBOSE] Determining majority type from: ['str', 'str', 'str', 'str', 'str', 'str', 'str'] -> str (count: 7)
 [VERBOSE] Determining majority type from: ['int', 'int', 'str', 'int', 'float', 'int', 'int'] -> int (count: 5)
 [VERBOSE] Determining majority type from: ['str', 'str', 'str', 'int', 'str', 'str', 'str'] -> str (count: 6)
 
 [VERBOSE] Expected types: ['str', 'float', 'str']
 
-  | Name      | Age        | Occupation  
---------------+------------+--------------
-1 | Alice     |  30        |  Engineer   
-2 | Bob       | 25         |  Designer   
-3 | Charlie   |  Manager   |             
-4 | Diana     |  28        |  7          
-5 | Edward    |   40.5     |  Developer  
-6 | Frank     |  20        |  Student    
-7 | George    | 45         |    Retired  
+  | Name      | Age       | Occupation  
+--------------+-----------+-------------
+1 | Alice     | 30        |  Engineer   
+2 | Bob       | 25        |  Designer   
+3 | Charlie   | Manager   |             
+4 | Diana     | 28        |  7          
+5 | Edward    | 40.5      |  Developer  
+6 | Frank     | 20        |  Student    
+7 | George    | 45        |  Retired    
 
 ROWS WITH INCORRECT LENGTH:
 Row 3 is of length 2, expected 3
