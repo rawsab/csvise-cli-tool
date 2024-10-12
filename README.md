@@ -1,4 +1,4 @@
-# 🛠️ CSV Tools
+# 🛠️ CSVise | CLI Tools for Tabular Data
 
 ## 💻 Setup
 Download `csvtools.py` (recommended to add to project directory) and run commands in terminal.
