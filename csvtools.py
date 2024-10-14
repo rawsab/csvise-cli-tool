@@ -1,11 +1,12 @@
 # CSV Display and Debugging Tool
 # Rawsab Said
-# Version 1.0.9
+# Version 1.1.0
 
 import csv
 import sys
 import re
 import json
+import click
 from collections import Counter
 
 DEBUG_MODE = False
@@ -13,8 +14,6 @@ VERBOSE_MODE = False
 CUSTOM_DELIMITER = None
 DISPLAY_TABLE = False
 SAVE_TO_FILE = None
-
-VALID_FLAGS = ['-debug', '-v', '-dl', '-display', '-stf']
 
 CONFIG_FILE = 'csvtoolsConfig.json'
 
@@ -118,7 +117,37 @@ def apply_string_case(value, case_type):
         return value.lower()
     return value
 
+@click.command()
+@click.argument('filename')
+@click.option('--display', is_flag=True, help="Displays a formatted table of the CSV data.")
+@click.option('--debug', is_flag=True, help="Enables debugging output for troubleshooting purposes.")
+@click.option('--verbose', '-v', is_flag=True, help="Activates verbose mode, providing detailed logs about script operations.")
+@click.option('--delimiter', '-dl', help="Sets a custom delimiter for splitting fields in the target file.")
+@click.option('--save_to_file', '-stf', help="Saves the printed output to a specified file.")
+@click.version_option('1.1.0', prog_name="CSV Display and Debugging Tool")
+def main(filename, display, debug, verbose, delimiter, save_to_file):
+    global DEBUG_MODE, VERBOSE_MODE, CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE
+
+    if debug:
+        DEBUG_MODE = True
+    if verbose:
+        VERBOSE_MODE = True
+    if display:
+        DISPLAY_TABLE = True
+    if delimiter:
+        CUSTOM_DELIMITER = delimiter
+    if save_to_file:
+        SAVE_TO_FILE = save_to_file
+
+    load_config()
+
+    try:
+        format_csv(filename)
+    except ValueError as e:
+        print(f"Error: {e}")
+
 def format_csv(filename):
+    print(f"Opening CSV file: {filename}")
     with open(filename, 'r') as file:
         sample_row = file.readline()
         delimiter = detect_delimiter(sample_row)
@@ -137,16 +166,15 @@ def format_csv(filename):
         print("The file is empty.")
         return
 
+    print(f"Number of rows read: {len(rows)}")
     log_verbose(f"Detected columns: {rows[0]}", section_break=True)
 
     cleaned_rows = []
     for i, row in enumerate(rows):
         cleaned_row = [clean_field(item) for item in row]
-        if cleaned_row != row:
-            cleaned_rows.append(cleaned_row)
+        cleaned_rows.append(cleaned_row)
 
-    if cleaned_rows:
-        log_verbose(f"Cleaned rows: {cleaned_rows}", section_break=True)
+    rows = cleaned_rows
 
     expected_length = len(rows[0])
     col_widths = [0] * expected_length
@@ -227,44 +255,6 @@ def format_csv(filename):
     else:
         print('\n'.join(output))
 
-def check_unknown_flags():
-    for arg in sys.argv[2:]:
-        if arg.startswith('-') and arg not in VALID_FLAGS:
-            print(f"Unknown flag: {arg}")
-            sys.exit(1)
 
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("To use script: python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter] [-stf output.txt]")
-        sys.exit(1)
-
-    csv_filename = sys.argv[1]
-    check_unknown_flags()
-
-    load_config()
-
-    if '-debug' in sys.argv:
-        DEBUG_MODE = True
-    if '-v' in sys.argv:
-        VERBOSE_MODE = True
-    if '-display' in sys.argv:
-        DISPLAY_TABLE = True
-    if '-dl' in sys.argv:
-        dl_index = sys.argv.index('-dl') + 1
-        if dl_index < len(sys.argv):
-            CUSTOM_DELIMITER = sys.argv[dl_index].strip()
-        else:
-            print("Please provide a custom delimiter after the -dl flag.")
-            sys.exit(1)
-    if '-stf' in sys.argv:
-        stf_index = sys.argv.index('-stf') + 1
-        if stf_index < len(sys.argv):
-            SAVE_TO_FILE = sys.argv[stf_index].strip()
-        else:
-            print("Please provide a file name after the -stf flag.")
-            sys.exit(1)
-
-    try:
-        format_csv(csv_filename)
-    except ValueError as e:
-        print(f"Error: {e}")
+    main()
