@@ -1,18 +1,23 @@
 # 🛠️ CSVise | CLI Tools for Tabular Data
 
 ## 💻 Setup
-Download `csvtools.py` (recommended to add to project directory) and run commands in terminal.
+Download `csvtools.py` and run commands in terminal. PyPI package (`pip` installation) coming soon.
 
 ## 💡 Features
-Run the following command, replacing `<filename.csv>` with path to target file and add flags for the following functionalities:
+To use tools, replace `FILENAME` with path to target file and add `[OPTIONS]` (flags) for the following functionalities:
 ```
-python3 csvtools.py <filename.csv> [-display] [-debug] [-v] [-dl delimiter] [-stf output.txt]
+python3 path/to/csvtools.py [OPTIONS] FILENAME
 ```
-- `-display` : Displays a formatted table output of the CSV data.
-- `-debug` : Enables debug output for troubleshooting purposes, including information on incomplete data and type mismatches.
+- `--display` : Displays a formatted table output of the CSV data.
+- `--debug` : Enables debug output for troubleshooting purposes, including information on incomplete data and type mismatches.
 - `-v` : Activates verbose mode, provides detailed logs about script operations.
-- `-dl delimiter` : Sets a custom delimiter for splitting fields in target CSV file.
-- `-stf output.txt` : Saves script output to a file (change `output.txt` to desired file to save in).
+- `-dl`, `--delimiter DELIMITER` : Sets a custom delimiter for splitting fields in target CSV file.
+- `-stf`, `--save_to_file OUTPUT` : Saves script output to a file (change `OUTPUT` to desired file to save in).
+
+---
+
+- `--help` : Provides support with commands and basic documentation.
+- `--version` : Displays current program version.
 
 ### Custom Delimiter Example:
 ```
