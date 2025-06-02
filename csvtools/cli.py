@@ -9,47 +9,16 @@ import json
 import click
 from collections import Counter
 
-DEBUG_MODE = False
-VERBOSE_MODE = False
+from .config import CONFIG, load_config
+from .utils import log_debug, log_verbose, set_debug_mode, set_verbose_mode
+from .delimiter import detect_delimiter
+from .cleaning import clean_field, apply_string_case
+from .types import detect_type, determine_majority_type
+from .formatter import format_and_output_csv
+
 CUSTOM_DELIMITER = None
 DISPLAY_TABLE = False
 SAVE_TO_FILE = None
-
-CONFIG_FILE = 'csvtoolsConfig.json'
-
-CONFIG = {
-    "additional_delimiters": [],
-    "start_index": 1,
-    "num_rows_to_print": None,
-    "display_column_lines": False,
-    "display_row_lines": False,
-    "check_type_mismatches": True,
-    "string_case": "default"
-}
-
-def log_debug(message):
-    if DEBUG_MODE:
-        print(f"[DEBUG] {message}")
-
-def log_verbose(message, section_break=False):
-    if VERBOSE_MODE:
-        if section_break:
-            print()
-        print(f"[VERBOSE] {message}")
-
-def load_config():
-    global CONFIG
-    try:
-        with open(CONFIG_FILE, 'r') as f:
-            user_config = json.load(f)
-            CONFIG.update(user_config)
-            log_verbose(f"Loaded configuration: {CONFIG}", section_break=True)
-    except FileNotFoundError:
-        log_verbose(f"Configuration file {CONFIG_FILE} not found. Using default settings.", section_break=True)
-    except json.JSONDecodeError:
-        print(f"Error decoding JSON from {CONFIG_FILE}. Using default settings.")
-    except Exception as e:
-        print(f"Error loading configuration: {e}. Using default settings.")
 
 def detect_delimiter(sample_row):
     if CUSTOM_DELIMITER:
@@ -126,12 +95,12 @@ def apply_string_case(value, case_type):
 @click.option('--save_to_file', '-stf', help="Saves the printed output to a specified file.")
 @click.version_option('1.1.0', prog_name="CSV Display and Debugging Tool")
 def main(filename, display, debug, verbose, delimiter, save_to_file):
-    global DEBUG_MODE, VERBOSE_MODE, CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE
+    global CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE
 
     if debug:
-        DEBUG_MODE = True
+        set_debug_mode(True)
     if verbose:
-        VERBOSE_MODE = True
+        set_verbose_mode(True)
     if display:
         DISPLAY_TABLE = True
     if delimiter:
@@ -187,7 +156,6 @@ def format_csv(filename):
             col_widths[i] = max(col_widths[i], len(str(item)) + 2)
 
     log_verbose(f"Formatted column display widths: {col_widths}")
-    output = []
 
     incorrect_length_rows = []
     type_mismatches = []
@@ -201,60 +169,27 @@ def format_csv(filename):
 
     log_verbose(f"Expected types: {expected_types}\n", section_break=True)
 
-    if DISPLAY_TABLE:
-        row_number_width = len(str(len(rows) - 1))
-        start_index = CONFIG["start_index"]
-        num_rows_to_print = CONFIG["num_rows_to_print"] or (len(rows) - start_index)
+    # Check for incorrect length and type mismatches
+    for row_number, row in enumerate(rows[CONFIG["start_index"]:], start=CONFIG["start_index"]):
+        actual_length = len([item for item in row if item.strip() != ''])
+        if actual_length != expected_length:
+            incorrect_length_rows.append((row_number, actual_length))
+        for i, item in enumerate(row):
+            if CONFIG["check_type_mismatches"]:
+                actual_type = detect_type(item, expected_types[i])
+                if expected_types[i] and actual_type != expected_types[i]:
+                    type_mismatches.append((row_number, i + 1, actual_type, expected_types[i]))
 
-        separator_char = " " if not CONFIG["display_column_lines"] else "|"
-        header_row = f"{' ' * row_number_width} {separator_char} " + f" {separator_char} ".join(
-            f"{apply_string_case(rows[0][i], CONFIG['string_case']):<{col_widths[i]}}" for i in range(expected_length)
-        )
-        output.append(header_row)
-        separator = f"{'--' * row_number_width}-" + "+".join('-' * (width + 2) for width in col_widths)
-        output.append(separator)
-
-        for row_number, row in enumerate(rows[start_index:start_index + num_rows_to_print], start=start_index):
-            actual_length = len([item for item in row if item.strip() != ''])
-
-            if actual_length != expected_length:
-                incorrect_length_rows.append((row_number, actual_length))
-
-            for i, item in enumerate(row):
-                if CONFIG["check_type_mismatches"]:
-                    actual_type = detect_type(item, expected_types[i])
-                    if expected_types[i] and actual_type != expected_types[i]:
-                        type_mismatches.append((row_number, i + 1, actual_type, expected_types[i]))
-
-            formatted_row = f"{row_number:<{row_number_width}} {separator_char} " + f" {separator_char} ".join(
-                f"{apply_string_case(row[i], CONFIG['string_case']):<{col_widths[i]}}" for i in range(expected_length)
-            )
-            output.append(formatted_row)
-            if CONFIG["display_row_lines"]:
-                output.append('-' * len(formatted_row))
-
-    if DEBUG_MODE:
-        if incorrect_length_rows:
-            output.append("\nROWS WITH INCORRECT LENGTH:")
-            for row_number, actual_length in incorrect_length_rows:
-                output.append(f"Row {row_number} is of length {actual_length}, expected {expected_length}")
-
-        if type_mismatches:
-            output.append("\nROWS WITH POTENTIAL TYPE MISMATCHES:")
-            for row_number, column, actual_type, expected_type in type_mismatches:
-                output.append(f"Row {row_number}, Column {column}: Found {actual_type}, expected {expected_type}")
-
-        output.append(f"\nTotal number of rows with incorrect length: {len(incorrect_length_rows)}")
-        output.append(f"Total number of type mismatches: {len(type_mismatches)}")
-    output.append("")
-
-    if SAVE_TO_FILE:
-        with open(SAVE_TO_FILE, 'w') as file:
-            file.write('\n'.join(output))
-        print(f"Output saved to {SAVE_TO_FILE}")
-    else:
-        print('\n'.join(output))
-
+    format_and_output_csv(
+        rows,
+        expected_types,
+        col_widths,
+        DISPLAY_TABLE,
+        SAVE_TO_FILE,
+        getattr(sys.modules['csvtools.utils'], 'DEBUG_MODE', False),
+        incorrect_length_rows,
+        type_mismatches
+    )
 
 if __name__ == "__main__":
     main()
