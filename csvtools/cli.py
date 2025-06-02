@@ -20,29 +20,6 @@ CUSTOM_DELIMITER = None
 DISPLAY_TABLE = False
 SAVE_TO_FILE = None
 
-def detect_delimiter(sample_row):
-    if CUSTOM_DELIMITER:
-        log_verbose(f"Using custom delimiter: {CUSTOM_DELIMITER}\n", section_break=True)
-        return CUSTOM_DELIMITER
-    log_verbose(f"Detecting delimiter from sample row: {sample_row}")
-
-    for delim in CONFIG["additional_delimiters"]:
-        if delim in sample_row:
-            log_verbose(f"Delimiter detected from config: {delim}")
-            return delim
-
-    if re.search(r'\t{2,}', sample_row):
-        log_verbose("Delimiter detected: Tabs")
-        return r'\t+'
-    elif re.search(r' {2,}', sample_row):
-        log_verbose("Delimiter detected: Spaces")
-        return r' +'
-    elif ',' in sample_row:
-        log_verbose("Delimiter detected: ,")
-        return ','
-    else:
-        raise ValueError("Supported delimiters are multiple tabs, multiple spaces, or comma. Use -dl flag for custom delimiter.")
-
 def clean_field(field):
     original_field = field
     field = field.strip()
@@ -86,16 +63,24 @@ def apply_string_case(value, case_type):
         return value.lower()
     return value
 
-@click.command()
-@click.argument('filename')
+@click.group()
+@click.version_option('1.1.0', prog_name="CSV Display and Debugging Tool")
+def cli():
+    """CSVise: CLI Tools for Tabular Data"""
+    pass
+
+@cli.command()
+@click.argument('filename', type=click.Path(exists=True))
 @click.option('--display', is_flag=True, help="Displays a formatted table of the CSV data.")
 @click.option('--debug', is_flag=True, help="Enables debugging output for troubleshooting purposes.")
 @click.option('--verbose', '-v', is_flag=True, help="Activates verbose mode, providing detailed logs about script operations.")
 @click.option('--delimiter', '-dl', help="Sets a custom delimiter for splitting fields in the target file.")
-@click.option('--save_to_file', '-stf', help="Saves the printed output to a specified file.")
-@click.version_option('1.1.0', prog_name="CSV Display and Debugging Tool")
-def main(filename, display, debug, verbose, delimiter, save_to_file):
-    global CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE
+@click.option('--save-to-file', '-stf', help="Saves the printed output to a specified file.")
+def display(filename, display, debug, verbose, delimiter, save_to_file):
+    """Display and debug CSV files."""
+    CUSTOM_DELIMITER = None
+    DISPLAY_TABLE = False
+    SAVE_TO_FILE = None
 
     if debug:
         set_debug_mode(True)
@@ -111,15 +96,15 @@ def main(filename, display, debug, verbose, delimiter, save_to_file):
     load_config()
 
     try:
-        format_csv(filename)
+        _format_csv(filename, CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE)
     except ValueError as e:
-        print(f"Error: {e}")
+        raise click.ClickException(str(e))
 
-def format_csv(filename):
+def _format_csv(filename, CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE):
     print(f"Opening CSV file: {filename}")
     with open(filename, 'r') as file:
         sample_row = file.readline()
-        delimiter = detect_delimiter(sample_row)
+        delimiter = detect_delimiter(sample_row, CUSTOM_DELIMITER)
         file.seek(0)
 
         if CUSTOM_DELIMITER:
@@ -180,16 +165,14 @@ def format_csv(filename):
                 if expected_types[i] and actual_type != expected_types[i]:
                     type_mismatches.append((row_number, i + 1, actual_type, expected_types[i]))
 
+    from .utils import DEBUG_MODE
     format_and_output_csv(
         rows,
         expected_types,
         col_widths,
         DISPLAY_TABLE,
         SAVE_TO_FILE,
-        getattr(sys.modules['csvtools.utils'], 'DEBUG_MODE', False),
+        DEBUG_MODE,
         incorrect_length_rows,
         type_mismatches
     )
-
-if __name__ == "__main__":
-    main()
