@@ -1,7 +1,7 @@
 # 🛠️ CSVise | CLI Tools for Tabular Data
 
 ## 💻 Setup
-Download `csvtools.py` and run commands in terminal. PyPI package (`pip` installation) coming soon.
+PyPI package (`pip` installation) coming soon.
 
 ## 💡 Features
 To use tools, replace `FILENAME` with path to target file and add `[OPTIONS]` (flags) for the following functionalities:
