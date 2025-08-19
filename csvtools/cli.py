@@ -69,7 +69,7 @@ def apply_string_case(value, case_type):
     return value
 
 @click.group()
-@click.version_option('1.2.0', prog_name="CSV Display and Debugging Tool")
+@click.version_option('1.2.2', prog_name="CSV Display and Debugging Tool")
 def cli():
     """CSVise: CLI Tools for Tabular Data"""
     pass
@@ -86,15 +86,13 @@ def cli():
 def display(filename, display, debug, verbose, delimiter, save_to_file, rich, classic):
     """Display and debug CSV files."""
     CUSTOM_DELIMITER = None
-    DISPLAY_TABLE = False
+    DISPLAY_TABLE = True  # Default to displaying the table
     SAVE_TO_FILE = None
 
     if debug:
         set_debug_mode(True)
     if verbose:
         set_verbose_mode(True)
-    if display:
-        DISPLAY_TABLE = True
     if delimiter:
         CUSTOM_DELIMITER = delimiter
     if save_to_file:
@@ -310,6 +308,19 @@ def _format_csv(filename, CUSTOM_DELIMITER, DISPLAY_TABLE, SAVE_TO_FILE, use_ric
             DEBUG_MODE,
             incorrect_length_rows,
             type_mismatches
+        )
+    else:
+        # Use Rich formatter (default)
+        format_and_output_csv_rich(
+            rows,
+            expected_types,
+            col_widths,
+            DISPLAY_TABLE,
+            SAVE_TO_FILE,
+            DEBUG_MODE,
+            incorrect_length_rows,
+            type_mismatches,
+            delimiter
         )
 
 def _load_csv_data(filename: str) -> Tuple[List[List[str]], List[str]]:

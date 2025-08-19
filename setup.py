@@ -8,7 +8,7 @@ with open("requirements.txt", "r", encoding="utf-8") as fh:
 
 setup(
     name="csvise",
-    version="1.2.0",
+    version = "1.2.2",
     author="Rawsab Said",
     description="CLI Tools for Tabular Data - CSV analysis, validation, and beautiful display",
     long_description=long_description,
