@@ -1,5 +1,9 @@
 # 🛠️ CSVise | CLI Tools for Tabular Data
 
+<div align="center">
+<img width="700" alt="Screenshot" src="https://github.com/user-attachments/assets/8343b73f-2887-48bc-b475-4abe2fa20c11" />
+</div>
+
 ## 💻 Setup
 PyPI package (`pip` installation) coming soon.
 
