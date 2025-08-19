@@ -10,7 +10,7 @@ PyPI package (`pip` installation) coming soon.
 ## 💡 Features
 
 ### Display & Validation
-```
+```bash
 csvise display FILENAME [OPTIONS]
 ```
 - `--display` : Displays a formatted table output of the CSV data.
@@ -22,7 +22,7 @@ csvise display FILENAME [OPTIONS]
 - `--classic` : Use classic plain text formatting.
 
 ### Data Analysis & Statistics
-```
+```bash
 csvise analyze FILENAME [OPTIONS]
 ```
 - `--columns`, `-c` : Comma-separated list of columns to analyze. If not specified, analyzes all columns.
@@ -33,7 +33,7 @@ csvise analyze FILENAME [OPTIONS]
 - `--classic` : Use classic plain text formatting.
 
 ### Data Cleaning Operations
-```
+```bash
 csvise clean FILENAME [OPTIONS]
 ```
 - `--remove-duplicates` : Remove duplicate rows.
@@ -52,25 +52,25 @@ csvise clean FILENAME [OPTIONS]
 - `--version` : Displays current program version.
 
 ### Custom Delimiter Example:
-```
+```bash
 python3 csvtools.py data.csv -display -dl ";"
 ```
 Displays a formatted table output of `data.csv` where the fields in raw data are separated by `;` (semicolon).
 
 ### Rich UI Example (Default):
-```
+```bash
 python3 csvtools.py data.csv --display --debug
 ```
 Displays a beautifully formatted table with colors, panels, and enhanced visual feedback for data validation issues.
 
 ### Classic Mode Example:
-```
+```bash
 csvise display data.csv --display --classic --debug
 ```
 Displays traditional plain text output for compatibility with scripts or environments that don't support Rich formatting.
 
 ### Data Analysis Examples:
-```
+```plaintext
 # Comprehensive analysis with correlations
 csvise analyze data.csv --correlations
 
@@ -85,7 +85,7 @@ csvise analyze data.csv --distribution
 ```
 
 ### Data Cleaning Examples:
-```
+```plaintext
 # Remove duplicates and normalize whitespace
 csvise clean data.csv --remove-duplicates --normalize-whitespace
 
@@ -123,7 +123,7 @@ Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it 
 ```
 
 ## Example Output
-```
+```plaintext
 [VERBOSE] Detecting delimiter from sample row: Name,Age,Occupation
 
 [VERBOSE] Delimiter detected: ,
