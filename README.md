@@ -70,7 +70,7 @@ csvise display data.csv --display --classic --debug
 Displays traditional plain text output for compatibility with scripts or environments that don't support Rich formatting.
 
 ### Data Analysis Examples:
-```plaintext
+```bash
 # Comprehensive analysis with correlations
 csvise analyze data.csv --correlations
 
@@ -85,7 +85,7 @@ csvise analyze data.csv --distribution
 ```
 
 ### Data Cleaning Examples:
-```plaintext
+```bash
 # Remove duplicates and normalize whitespace
 csvise clean data.csv --remove-duplicates --normalize-whitespace
 
