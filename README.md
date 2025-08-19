@@ -1,18 +1,50 @@
 # 🛠️ CSVise | CLI Tools for Tabular Data
 
+<div align="center">
+<img width="700" alt="Screenshot" src="https://github.com/user-attachments/assets/8343b73f-2887-48bc-b475-4abe2fa20c11" />
+</div>
+
 ## 💻 Setup
 PyPI package (`pip` installation) coming soon.
 
 ## 💡 Features
-To use tools, replace `FILENAME` with path to target file and add `[OPTIONS]` (flags) for the following functionalities:
+
+### Display & Validation
 ```
-python3 path/to/csvtools.py [OPTIONS] FILENAME
+csvise display FILENAME [OPTIONS]
 ```
 - `--display` : Displays a formatted table output of the CSV data.
 - `--debug` : Enables debug output for troubleshooting purposes, including information on incomplete data and type mismatches.
 - `-v` : Activates verbose mode, provides detailed logs about script operations.
 - `-dl`, `--delimiter DELIMITER` : Sets a custom delimiter for splitting fields in target CSV file.
 - `-stf`, `--save_to_file OUTPUT` : Saves script output to a file (change `OUTPUT` to desired file to save in).
+- `--rich` : Use Rich formatting for enhanced CLI output with colors, tables, and panels. [default]
+- `--classic` : Use classic plain text formatting.
+
+### Data Analysis & Statistics
+```
+csvise analyze FILENAME [OPTIONS]
+```
+- `--columns`, `-c` : Comma-separated list of columns to analyze. If not specified, analyzes all columns.
+- `--correlations` : Show correlation matrix for numeric columns.
+- `--outliers` : Detect outliers in numeric columns.
+- `--distribution` : Show value distribution for categorical columns.
+- `-v` : Activates verbose mode.
+- `--classic` : Use classic plain text formatting.
+
+### Data Cleaning Operations
+```
+csvise clean FILENAME [OPTIONS]
+```
+- `--remove-duplicates` : Remove duplicate rows.
+- `--normalize-whitespace` : Normalize whitespace in all columns.
+- `--standardize-case` : Standardize text case (upper, lower, title, sentence).
+- `--fill-missing` : Fill missing values using specified strategy (empty, mode, mean, median, custom).
+- `--fill-value` : Custom value to use when filling missing values.
+- `--remove-empty-rows` : Remove rows with specified fraction of empty cells (0.0 to 1.0).
+- `--output`, `-o` : Output file for cleaned data.
+- `-v` : Activates verbose mode.
+- `--classic` : Use classic plain text formatting.
 
 ---
 
@@ -24,6 +56,48 @@ python3 path/to/csvtools.py [OPTIONS] FILENAME
 python3 csvtools.py data.csv -display -dl ";"
 ```
 Displays a formatted table output of `data.csv` where the fields in raw data are separated by `;` (semicolon).
+
+### Rich UI Example (Default):
+```
+python3 csvtools.py data.csv --display --debug
+```
+Displays a beautifully formatted table with colors, panels, and enhanced visual feedback for data validation issues.
+
+### Classic Mode Example:
+```
+csvise display data.csv --display --classic --debug
+```
+Displays traditional plain text output for compatibility with scripts or environments that don't support Rich formatting.
+
+### Data Analysis Examples:
+```
+# Comprehensive analysis with correlations
+csvise analyze data.csv --correlations
+
+# Analyze specific columns only
+csvise analyze data.csv --columns "Age,Salary,Department"
+
+# Detect outliers in numeric columns
+csvise analyze data.csv --outliers
+
+# Show value distribution
+csvise analyze data.csv --distribution
+```
+
+### Data Cleaning Examples:
+```
+# Remove duplicates and normalize whitespace
+csvise clean data.csv --remove-duplicates --normalize-whitespace
+
+# Standardize case and fill missing values
+csvise clean data.csv --standardize-case title --fill-missing mode
+
+# Remove empty rows and save cleaned data
+csvise clean data.csv --remove-empty-rows 0.5 --output cleaned_data.csv
+
+# Complex cleaning pipeline
+csvise clean data.csv --remove-duplicates --normalize-whitespace --standardize-case title --fill-missing mean --output cleaned_data.csv
+```
 
 ### ⚙️ Configuration
 Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it is in the same directory as `csvtools.py`).
@@ -96,6 +170,44 @@ Row 4, Column 3: Found int, expected str
 Total number of rows with incorrect length: 1
 Total number of type mismatches: 2
 ```
+
+## 🎨 Rich UI Integration
+
+CSVise now features beautiful Rich-powered CLI output with:
+
+- **Color-coded Tables**: Data types are color-coded (integers in green, floats in yellow, booleans in magenta)
+- **Information Panels**: File statistics and validation issues displayed in styled panels
+- **Progress Indicators**: Visual feedback during data processing
+- **Enhanced Error Messages**: Beautiful error and success message formatting
+- **Type-based Highlighting**: Automatic highlighting of data type mismatches
+
+### Rich vs Classic Mode
+
+- **Rich Mode** (`--rich`): Enhanced visual experience with colors, panels, and modern styling **[default]**
+- **Classic Mode** (`--classic`): Traditional plain text output for compatibility
+
+## 📊 Data Analysis & Statistics
+
+CSVise provides comprehensive data analysis capabilities:
+
+- **Column Statistics**: Mean, median, mode, min/max, standard deviation for numeric columns
+- **Data Quality Metrics**: Completeness, consistency, and uniqueness scores
+- **Correlation Analysis**: Find relationships between numeric columns
+- **Outlier Detection**: Identify statistical outliers using IQR or z-score methods
+- **Value Distribution**: Frequency analysis for categorical data
+- **Missing Data Analysis**: Count and percentage of null/empty values per column
+
+## 🧹 Data Cleaning Operations
+
+Powerful data cleaning and transformation features:
+
+- **Duplicate Removal**: Remove duplicate rows with flexible column selection
+- **Whitespace Normalization**: Clean and standardize whitespace across all columns
+- **Case Standardization**: Convert text to upper, lower, title, or sentence case
+- **Missing Value Handling**: Fill missing values using mode, mean, median, or custom values
+- **Empty Row Removal**: Remove rows with high percentages of empty cells
+- **Date Normalization**: Standardize date formats across columns
+- **Data Export**: Save cleaned data to new CSV files
 
 ## 🗓️ Upcoming Features
 - Data normalization
