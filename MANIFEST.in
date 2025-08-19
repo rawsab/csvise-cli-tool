@@ -1,0 +1,22 @@
+include README.md
+include LICENSE
+include requirements.txt
+include csvtoolsConfig.json
+include pyproject.toml
+include setup.py
+
+recursive-include csvtools *.py
+recursive-include csvtools *.json
+
+global-exclude *.pyc
+global-exclude *.pyo
+global-exclude __pycache__
+global-exclude .DS_Store
+global-exclude *.egg-info
+global-exclude .git
+global-exclude .gitignore
+global-exclude .pytest_cache
+global-exclude .coverage
+global-exclude htmlcov
+global-exclude .mypy_cache
+global-exclude .black_cache
