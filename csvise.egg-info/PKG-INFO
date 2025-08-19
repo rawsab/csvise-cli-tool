@@ -4,8 +4,14 @@ Version: 1.2.0
 Summary: CLI Tools for Tabular Data - CSV analysis, validation, and beautiful display
 Home-page: https://github.com/rawsabsaid/csvise-cli-tool
 Author: Rawsab Said
-Project-URL: Bug Reports, https://github.com/rawsabsaid/csvise-cli-tool/issues
-Project-URL: Source, https://github.com/rawsabsaid/csvise-cli-tool
+Author-email: Rawsab Said <rawsab04@gmail.com>
+Maintainer-email: Rawsab Said <rawsab04@gmail.com>
+License: MIT
+Project-URL: Homepage, https://github.com/rawsabsaid/csvise-cli-tool
+Project-URL: Documentation, https://github.com/rawsabsaid/csvise-cli-tool#readme
+Project-URL: Repository, https://github.com/rawsabsaid/csvise-cli-tool
+Project-URL: Bug Tracker, https://github.com/rawsabsaid/csvise-cli-tool/issues
+Project-URL: Source Code, https://github.com/rawsabsaid/csvise-cli-tool
 Keywords: csv,cli,data-analysis,validation,table,rich,formatting
 Classifier: Development Status :: 4 - Beta
 Classifier: Intended Audience :: Developers
@@ -18,6 +24,7 @@ Classifier: Programming Language :: Python :: 3.8
 Classifier: Programming Language :: Python :: 3.9
 Classifier: Programming Language :: Python :: 3.10
 Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
 Classifier: Topic :: Scientific/Engineering :: Information Analysis
 Classifier: Topic :: Software Development :: Libraries :: Python Modules
 Classifier: Topic :: Text Processing :: Filters
@@ -27,19 +34,23 @@ Description-Content-Type: text/markdown
 License-File: LICENSE
 Requires-Dist: click>=8.0.0
 Requires-Dist: rich>=13.0.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.0.0; extra == "dev"
+Requires-Dist: pytest-cov>=4.0.0; extra == "dev"
+Requires-Dist: black>=22.0.0; extra == "dev"
+Requires-Dist: flake8>=5.0.0; extra == "dev"
+Requires-Dist: mypy>=1.0.0; extra == "dev"
+Requires-Dist: pre-commit>=2.20.0; extra == "dev"
 Dynamic: author
-Dynamic: classifier
-Dynamic: description
-Dynamic: description-content-type
 Dynamic: home-page
-Dynamic: keywords
 Dynamic: license-file
-Dynamic: project-url
-Dynamic: requires-dist
 Dynamic: requires-python
-Dynamic: summary
 
 # 🛠️ CSVise | CLI Tools for Tabular Data
+
+<div align="center">
+<img width="700" alt="Screenshot" src="https://github.com/user-attachments/assets/8343b73f-2887-48bc-b475-4abe2fa20c11" />
+</div>
 
 ## 💻 Setup
 PyPI package (`pip` installation) coming soon.
@@ -90,13 +101,13 @@ csvise clean FILENAME [OPTIONS]
 
 ### Custom Delimiter Example:
 ```
-csvise display data.csv -display -dl ";"
+python3 csvtools.py data.csv -display -dl ";"
 ```
 Displays a formatted table output of `data.csv` where the fields in raw data are separated by `;` (semicolon).
 
 ### Rich UI Example (Default):
 ```
-csvise display data.csv --display --debug
+python3 csvtools.py data.csv --display --debug
 ```
 Displays a beautifully formatted table with colors, panels, and enhanced visual feedback for data validation issues.
 
@@ -137,7 +148,7 @@ csvise clean data.csv --remove-duplicates --normalize-whitespace --standardize-c
 ```
 
 ### ⚙️ Configuration
-Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it is in the same directory as the csvise command).
+Customize default behaviour of the script with `csvtoolsConfig.json` (ensure it is in the same directory as `csvtools.py`).
 ```jsonc
 {
     // additional delimiters to automatically detect
